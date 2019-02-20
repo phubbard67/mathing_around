@@ -1,19 +1,20 @@
-#makes hw3
-
+#makes main
+#make main will build
+#make clean will destroy
 
 CC = gcc
 CFLAGS = -g -Wall
 
-default: hw3
+default: math 
 
-hw3:	hw3.o powerOfTwo.o 
-	$(CC) $(CFLAGS) -o hw3 hw3.o powerOfTwo.o
+math:	main.o powerOfTwo.o 
+	$(CC) $(CFLAGS) -o main main.o powerOfTwo.o
 
-hw3.o: hw3.c powerOfTwo.h
-	$(CC) $(CFLAGS) -c hw3.c
+main.o: main.c powerOfTwo.h
+	$(CC) $(CFLAGS) -c main.c
 
 powerOfTwo.o: powerOfTwo.c powerOfTwo.h
 	$(CC) $(CFLAGS) -c powerOfTwo.c
 
 clean:
-	$(RM) hw3 *.o*
+	$(RM) main *.o*
