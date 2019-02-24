@@ -7,7 +7,7 @@ CFLAGS = -g -Wall
 
 default: all 
 
-all:	main.o powerOfTwo.o 
+all:	main.o powerOfTwo.o graph.o
 	$(CC) $(CFLAGS) -o main main.o powerOfTwo.o graph.o
 
 main.o: main.c powerOfTwo.h
