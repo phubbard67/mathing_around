@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include "powerOfTwo.h"
@@ -6,12 +7,13 @@
 
 int main(int argc, char *argv[])
 {
-	computeTwoToTheN();
-	int ** graph = createGraph();
+	//computeTwoToTheN();
+	struct Graph* graph;
+	graph = createGraph();
 
-	graph[0][1] = 23;
+	printGraph(graph);
 
-	printf("graph[0][1]: %d\n", graph[0][1]);
+	deleteGraph(graph);
 
 	return 0;
 }
