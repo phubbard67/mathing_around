@@ -32,6 +32,8 @@ struct Graph* createGraph()
 
   randGraphGen(graphStruct, h, w);
 
+
+
   free(uHeight);
   free(uWidth);
 	
@@ -94,25 +96,30 @@ int randGraphGen(struct Graph* graph, int h, int w)
 		}
 
 
-		if(BFS(graph) != -1)
+		if(BFS(graph, false) != -1)
 			stop = 1;
 	}
 
 	return 0;
 }
 //this is the BFS function that returns the shortest path
-int BFS(struct Graph* graph)
+int BFS(struct Graph* graph, bool printShortstPath)
 { 
 	struct Graph* boolGraph = (struct Graph*) malloc(sizeof(struct Graph*));
 	boolGraph->height = graph->height;
 	boolGraph->width = graph->width;
 	initBoolGraph(boolGraph); //Initialize bool graph to all 0's
+	struct Graph* graphToPrint = (struct Graph*) malloc(sizeof(struct Graph*));
+	graphToPrint->height = graph->height;
+	graphToPrint->width = graph->width;
+	initBoolGraph(graphToPrint); //Initialize bool graph to all 0's
 	std::queue<QNode> newQueue;
 	QNode initNode;
 	int leftDown = -1;
 	int rightUp = 1;
 	int row;
 	int col; //ints to keep track of the adjacent rows
+	int hasLesser; //used for checking the shortest path to print
 	initNode.location.x = 0;
 	initNode.location.y = 0;
 	initNode.count = 0;
@@ -131,11 +138,81 @@ int BFS(struct Graph* graph)
 
 		if(curLoc.y == graph->width - 1 && curLoc.x == graph->height - 1)
 		{
+			if(printShortstPath)
+			{
+				//work backwards from the width - 1 and height - 1
+				//if the graph has a value one lesser than it in any
+				//direction, store that value into a new graph seperate
+				//from the graphToPrint graph in its respective cell. This will be a new graph
+				//that is initialized to zero, and as you find a new value one lesser than
+				//the highest, find a way to move directly to that cell and start over.
+
+					hasLesser = 0;
+					int j = graphToPrint->width -1;
+					int i = graphToPrint->height -1;
+
+					while(i != 0 && j != 0)
+					{
+						if(j == graphToPrint->width - 1 && i == graphToPrint->height - 1)
+						{
+							hasLesser = 1;
+						}
+						//check left
+						row = i - 1;
+						col = j;
+
+						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] = graphToPrint->graph[row][col]))
+						{
+							hasLesser = 1;
+						}
+
+						//check right
+						row = i + 1;
+						col = j;
+
+						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] < graphToPrint->graph[row][col]))
+						{
+							hasLesser = 1;
+						}
+
+						//check up
+						row = i;
+						col = j + 1;
+
+						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] < graphToPrint->graph[row][col]))
+						{
+							hasLesser = 1;
+						}
+
+						//check down
+						row = i;
+						col = j - 1;
+
+						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] < graphToPrint->graph[row][col]))
+						{
+							hasLesser = 1;
+						}
+
+						if(hasLesser == 0)
+						{
+							graphToPrint->graph[i][j] = 0;
+						}
+						else
+						{
+							hasLesser = 0;
+						}
+					}
+
+				printf("Every possible shortest path, with some potential overhang (trying to fix this).");
+				graphToPrint->graph[0][0] = 0;
+				printGraph(graphToPrint);
+			}
 			deleteGraph(boolGraph);
+			deleteGraph(graphToPrint);
 			return curNode.count;
 		}
-
-		newQueue.pop();
+		else
+			newQueue.pop();
 
 		//check left
 		row = curLoc.x;
@@ -148,6 +225,7 @@ int BFS(struct Graph* graph)
 			left.location.y = col;
 			left.count = curNode.count + 1;
 			newQueue.push(left);
+			graphToPrint->graph[row][col] = curNode.count + 1;
 			boolGraph->graph[row][col] = 1;
 		}
 
@@ -162,6 +240,7 @@ int BFS(struct Graph* graph)
 			right.location.y = col;
 			right.count = curNode.count + 1;
 			newQueue.push(right);
+			graphToPrint->graph[row][col] = curNode.count + 1;
 			boolGraph->graph[row][col] = 1;
 		}
 
@@ -176,6 +255,7 @@ int BFS(struct Graph* graph)
 			up.location.y = col;
 			up.count = curNode.count + 1;
 			newQueue.push(up);
+			graphToPrint->graph[row][col] = curNode.count + 1;
 			boolGraph->graph[row][col] = 1;
 		}
 
@@ -190,6 +270,7 @@ int BFS(struct Graph* graph)
 			down.location.y = col;
 			down.count = curNode.count + 1;
 			newQueue.push(down);
+			graphToPrint->graph[row][col] = curNode.count + 1;
 			boolGraph->graph[row][col] = 1;
 		}
 	}
@@ -251,9 +332,6 @@ void initBoolGraph(struct Graph* boolGraph)
 		}
 	}
 }
-
-
-
 
 
 

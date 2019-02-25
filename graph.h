@@ -21,7 +21,7 @@ struct Graph* createGraph();
 //0 being a clear vertex and 1 being blocked
 int randGraphGen(struct Graph* graph, int h, int w);
 //this is the BFS function that returns the shortest path
-int BFS(struct Graph* graph);
+int BFS(struct Graph* graph, bool inGraphGen);
 //delete the graph you made
 void deleteGraph(struct Graph* graph);
 //print the graph in ascii art

@@ -31,5 +31,4 @@ struct QNode{
 	Location location;
 };
 
-
 #endif /* QUEUE_H_ */
