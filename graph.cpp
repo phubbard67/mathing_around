@@ -29,7 +29,8 @@ struct Graph* createGraph()
   graphStruct->height = h;
   graphStruct->width = w;
 
-  populateGraph(graphStruct, h, w);
+
+  randGraphGen(graphStruct, h, w);
 
 
 
@@ -50,7 +51,7 @@ void deleteGraph(struct Graph* graph)
 
 //this populates the graph with random values
 //0 being a clear vertex and 1 being blocked
-int populateGraph(struct Graph* graph, int h, int w)
+int randGraphGen(struct Graph* graph, int h, int w)
 { 
 	srand(time(0));
 	int randBit;
@@ -91,7 +92,7 @@ int populateGraph(struct Graph* graph, int h, int w)
 	return 0;
 }
 //this is the BFS function that returns the shortest path
-int BFS(int **graphArray)
+int BFS(struct Graph* graph)
 { 
 
 	return 0;
@@ -111,7 +112,17 @@ void printGraph(struct Graph* graph)
 }
 
 
+//check to see if the position is in the graph's bounds
+bool inBounds(struct Graph* graph, int posX, int posY)
+{
+	int gHeight = graph->height;
+	int gWidth  = graph->width;
 
+	if(posX >= 0 && posY >= 0 && posX < gHeight && posY < gWidth)
+		return true;
+
+	return false;
+}
 
 
 

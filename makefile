@@ -7,20 +7,17 @@ CFLAGS = -g -Wall
 
 default: all 
 
-all:	main.o powerOfTwo.o graph.o queue.o
-	$(CC) $(CFLAGS) -o main main.o powerOfTwo.o graph.o queue.o
+all:	main.o powerOfTwo.o graph.o 
+	$(CC) $(CFLAGS) -o main main.o powerOfTwo.o graph.o
 
 main.o: main.cpp powerOfTwo.h
 	$(CC) $(CFLAGS) -c main.cpp
 
-powerOfTwo.o: powerOfTwo.c powerOfTwo.h
+powerOfTwo.o: powerOfTwo.cpp powerOfTwo.h
 	$(CC) $(CFLAGS) -c powerOfTwo.cpp
 
-graph.o: graph.cpp graph.h
+graph.o: graph.cpp graph.h queue.h
 	$(CC) $(CFLAGS) -c graph.cpp
-
-queue.o: queue.cpp queue.h
-	$(CC) $(CFLAGS) -c queue.cpp
 
 clean:
 	$(RM) main *.o*

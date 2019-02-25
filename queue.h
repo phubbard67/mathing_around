@@ -3,8 +3,8 @@
  *
  *  Created on: Feb 23, 2019
  *      Author: Paul
- *      this code was taken from
- *      https://www.geeksforgeeks.org/queue-set-1introduction-and-array-implementation/
+ *      code ideas derived from
+ *      https://en.wikipedia.org/wiki/Lee_algorithm
  */
 
 #ifndef QUEUE_H_
@@ -14,23 +14,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <queue>
 
-// A structure to represent a queue
-typedef struct Queue
-{
-	int ** queue;
-	int width;
-	int height;
-}Queue;
+//a struct to represent the location in the matrix
+struct Location{
+	int x;
+	int y;
+};
 
-//creates the queue struct
-struct Queue* createQueue(int h, int w);
-//initializes the queue to all 0's or false
-void initQueue(struct Queue* queue);
-//checks to see if the location has been visited
-//at a given height h and width w
-int wasVisited(int ** queue, int h, int w);
-//sets a given position to vistied
-void setVisited(int ** queue, int h, int w);
+//A node for the queue
+struct QNode{
+	//count holding how many steps that have been taken through the graph
+	//up to this point
+	int count;
+	//struct holding the nodes position
+	Location location;
+};
+
 
 #endif /* QUEUE_H_ */
