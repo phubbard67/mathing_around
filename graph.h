@@ -3,7 +3,8 @@
 #include <string.h>
 #include <time.h>
 #include <iostream>
-#include "queue.h"
+#include <queue>
+#include "myQueue.h"
 
 //struct to hold graph info
 typedef struct Graph
@@ -27,3 +28,6 @@ void deleteGraph(struct Graph* graph);
 void printGraph(struct Graph* graph);
 //check to see if the position is in the graph's bounds
 bool inBounds(struct Graph* graph, int posX, int posY);
+//initialize a bool graph to keep track of the
+//visited positions to all 0's
+void initBoolGraph(struct Graph* boolGraph);

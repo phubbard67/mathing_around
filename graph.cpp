@@ -32,8 +32,6 @@ struct Graph* createGraph()
 
   randGraphGen(graphStruct, h, w);
 
-
-
   free(uHeight);
   free(uWidth);
 	
@@ -55,52 +53,157 @@ int randGraphGen(struct Graph* graph, int h, int w)
 { 
 	srand(time(0));
 	int randBit;
+	int stop = 0;
 
 	//nest this in a do while loop that has the while condition
 	//set to the return from the BFS
-
-	for(int i = 0; i < h; ++i)
+	while(stop == 0)
 	{
-		for(int j = 0; j < w; ++j)
+		for(int i = 0; i < h; ++i)
 		{
-			if((j == 0 && i == 0) || (j == w - 1 && i == h - 1))
+			for(int j = 0; j < w; ++j)
 			{
-				graph->graph[i][j] = 0;
-			}
-			else
-			{
-				randBit = rand() % 4;
-				switch(randBit)
+				if((j == 0 && i == 0) || (j == w - 1 && i == h - 1))
 				{
-					case 0:
-						randBit = 0;
-						break;
-					case 1:
-						randBit = 0;
-						break;
-					case 2:
-						randBit = 0;
-						break;
-					case 3:
-						randBit = 1;
-						break;
+					graph->graph[i][j] = 0;
 				}
-				graph->graph[i][j] = randBit;
+				else
+				{
+					randBit = rand() % 5;
+					switch(randBit)
+					{
+						case 0:
+							randBit = 0;
+							break;
+						case 1:
+							randBit = 0;
+							break;
+						case 2:
+							randBit = 0;
+							break;
+						case 3:
+							randBit = 1;
+							break;
+						case 4:
+							randBit = 1;
+							break;
+					}
+					graph->graph[i][j] = randBit;
+				}
 			}
 		}
+
+
+		if(BFS(graph) != -1)
+			stop = 1;
 	}
+
 	return 0;
 }
 //this is the BFS function that returns the shortest path
 int BFS(struct Graph* graph)
 { 
+	struct Graph* boolGraph = (struct Graph*) malloc(sizeof(struct Graph*));
+	boolGraph->height = graph->height;
+	boolGraph->width = graph->width;
+	initBoolGraph(boolGraph); //Initialize bool graph to all 0's
+	std::queue<QNode> newQueue;
+	QNode initNode;
+	int leftDown = -1;
+	int rightUp = 1;
+	int row;
+	int col; //ints to keep track of the adjacent rows
+	initNode.location.x = 0;
+	initNode.location.y = 0;
+	initNode.count = 0;
 
-	return 0;
+	//push the first node onto the queue
+	//this does not require a check for zero,
+	//because the graph will always have a 0 in the
+	//first position
+	newQueue.push(initNode);
+
+
+	while(!newQueue.empty())
+	{
+		QNode curNode = newQueue.front();
+		Location curLoc = curNode.location;
+
+		if(curLoc.y == graph->width - 1 && curLoc.x == graph->height - 1)
+		{
+			deleteGraph(boolGraph);
+			return curNode.count;
+		}
+
+		newQueue.pop();
+
+		//check left
+		row = curLoc.x;
+		col = curLoc.y + leftDown;
+
+		if(inBounds(graph, row, col) && graph->graph[row][col] == 0 && boolGraph->graph[row][col] == 0)
+		{
+			QNode left;
+			left.location.x = row;
+			left.location.y = col;
+			left.count = curNode.count + 1;
+			newQueue.push(left);
+			boolGraph->graph[row][col] = 1;
+		}
+
+		//check right
+		row = curLoc.x;
+		col = curLoc.y + rightUp;
+
+		if(inBounds(graph, row, col) && graph->graph[row][col] == 0 && boolGraph->graph[row][col] == 0)
+		{
+			QNode right;
+			right.location.x = row;
+			right.location.y = col;
+			right.count = curNode.count + 1;
+			newQueue.push(right);
+			boolGraph->graph[row][col] = 1;
+		}
+
+		//check up
+		row = curLoc.x + rightUp;
+		col = curLoc.y;
+
+		if(inBounds(graph, row, col) && graph->graph[row][col] == 0 && boolGraph->graph[row][col] == 0)
+		{
+			QNode up;
+			up.location.x = row;
+			up.location.y = col;
+			up.count = curNode.count + 1;
+			newQueue.push(up);
+			boolGraph->graph[row][col] = 1;
+		}
+
+		//check down
+		row = curLoc.x + leftDown;
+		col = curLoc.y;
+
+		if(inBounds(graph, row, col) && graph->graph[row][col] == 0 && boolGraph->graph[row][col] == 0)
+		{
+			QNode down;
+			down.location.x = row;
+			down.location.y = col;
+			down.count = curNode.count + 1;
+			newQueue.push(down);
+			boolGraph->graph[row][col] = 1;
+		}
+	}
+
+	deleteGraph(boolGraph);
+	return -1;
 }
 
 //print the graph in ascii art
 void printGraph(struct Graph* graph)
 {
+	//print an initial new line for spacing purposes
+	printf("\n");
+
 	for(int i = 0; i < (graph->height); ++i)
 	{
 		for(int j = 0; j < (graph->width); ++j)
@@ -109,6 +212,8 @@ void printGraph(struct Graph* graph)
 		}
 		printf("\n");
 	}
+	//print a final new line for spacing purposes
+	printf("\n");
 }
 
 
@@ -126,7 +231,26 @@ bool inBounds(struct Graph* graph, int posX, int posY)
 
 
 
+void initBoolGraph(struct Graph* boolGraph)
+{
+	int * values = static_cast<int*>(calloc(boolGraph->height*boolGraph->width, sizeof(int)));
+	int ** graph = static_cast<int**>(malloc((boolGraph->height)*sizeof(int*)));
 
+	for(int i = 0; i<boolGraph->height; ++i)
+	{
+		graph[i] = values + i*boolGraph->width;
+	}
+
+	boolGraph->graph = graph;
+
+	for(int i = 0; i < boolGraph->height; ++i)
+	{
+		for(int j = 0; j < boolGraph->width; ++ j)
+		{
+			boolGraph->graph[i][j] = 0;
+		}
+	}
+}
 
 
 

@@ -16,7 +16,7 @@ main.o: main.cpp powerOfTwo.h
 powerOfTwo.o: powerOfTwo.cpp powerOfTwo.h
 	$(CC) $(CFLAGS) -c powerOfTwo.cpp
 
-graph.o: graph.cpp graph.h queue.h
+graph.o: graph.cpp graph.h myQueue.h
 	$(CC) $(CFLAGS) -c graph.cpp
 
 clean:
