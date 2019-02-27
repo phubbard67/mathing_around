@@ -109,6 +109,10 @@ int BFS(struct Graph* graph, bool printShortstPath)
 	boolGraph->height = graph->height;
 	boolGraph->width = graph->width;
 	initBoolGraph(boolGraph); //Initialize bool graph to all 0's
+	struct Graph* graphToPrintHolder = (struct Graph*) malloc(sizeof(struct Graph*));
+	graphToPrintHolder->height = graph->height;
+	graphToPrintHolder->width = graph->width;
+	initBoolGraph(graphToPrintHolder); //Initialize bool graph to all 0's
 	struct Graph* graphToPrint = (struct Graph*) malloc(sizeof(struct Graph*));
 	graphToPrint->height = graph->height;
 	graphToPrint->width = graph->width;
@@ -119,10 +123,10 @@ int BFS(struct Graph* graph, bool printShortstPath)
 	int rightUp = 1;
 	int row;
 	int col; //ints to keep track of the adjacent rows
-	int hasLesser; //used for checking the shortest path to print
 	initNode.location.x = 0;
 	initNode.location.y = 0;
 	initNode.count = 0;
+	int found;
 
 	//push the first node onto the queue
 	//this does not require a check for zero,
@@ -147,68 +151,69 @@ int BFS(struct Graph* graph, bool printShortstPath)
 				//that is initialized to zero, and as you find a new value one lesser than
 				//the highest, find a way to move directly to that cell and start over.
 
-					hasLesser = 0;
 					int j = graphToPrint->width -1;
 					int i = graphToPrint->height -1;
 
-					while(i != 0 && j != 0)
+					while(graphToPrint->graph[i][j] != 1)
 					{
-						if(j == graphToPrint->width - 1 && i == graphToPrint->height - 1)
-						{
-							hasLesser = 1;
-						}
+						found = 0;
 						//check left
 						row = i - 1;
 						col = j;
 
-						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] = graphToPrint->graph[row][col]))
+						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] - 1 == graphToPrint->graph[row][col]) && found == 0)
 						{
-							hasLesser = 1;
+							graphToPrintHolder->graph[row][col] = 1;
+							i = row;
+							j = col;
+							found = 1;
 						}
 
 						//check right
 						row = i + 1;
 						col = j;
 
-						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] < graphToPrint->graph[row][col]))
+						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j]- 1 == graphToPrint->graph[row][col]) && found == 0)
 						{
-							hasLesser = 1;
+							graphToPrintHolder->graph[row][col] = 1;
+							i = row;
+							j = col;
+							found = 1;
 						}
 
 						//check up
 						row = i;
 						col = j + 1;
 
-						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] < graphToPrint->graph[row][col]))
+						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] - 1 == graphToPrint->graph[row][col]) && found == 0)
 						{
-							hasLesser = 1;
+							graphToPrintHolder->graph[row][col] = 1;
+							i = row;
+							j = col;
+							found = 1;
 						}
 
 						//check down
 						row = i;
 						col = j - 1;
 
-						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] < graphToPrint->graph[row][col]))
+						if(inBounds(graph, row, col) && (graphToPrint->graph[i][j] - 1 == graphToPrint->graph[row][col]) && found == 0)
 						{
-							hasLesser = 1;
+							graphToPrintHolder->graph[row][col] = 1;
+							i = row;
+							j = col;
+							found = 1;
 						}
 
-						if(hasLesser == 0)
-						{
-							graphToPrint->graph[i][j] = 0;
-						}
-						else
-						{
-							hasLesser = 0;
-						}
 					}
 
 				printf("Every possible shortest path, with some potential overhang (trying to fix this).");
-				graphToPrint->graph[0][0] = 0;
-				printGraph(graphToPrint);
+				graphToPrintHolder->graph[graphToPrintHolder->width - 1][graphToPrintHolder->width - 1] = graphToPrint->graph[graph->height - 1][graph->width - 1];
+				printGraph(graphToPrintHolder);
 			}
 			deleteGraph(boolGraph);
 			deleteGraph(graphToPrint);
+			deleteGraph(graphToPrintHolder);
 			return curNode.count;
 		}
 		else
@@ -289,7 +294,7 @@ void printGraph(struct Graph* graph)
 	{
 		for(int j = 0; j < (graph->width); ++j)
 		{
-			printf("%d ", graph->graph[i][j]);
+			printf(" %d ", graph->graph[i][j]);
 		}
 		printf("\n");
 	}
