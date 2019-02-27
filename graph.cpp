@@ -207,7 +207,7 @@ int BFS(struct Graph* graph, bool printShortstPath)
 
 					}
 
-				printf("Every possible shortest path, with some potential overhang (trying to fix this).");
+				printf("The Solved Graph/Map:");
 				graphToPrintHolder->graph[graphToPrintHolder->width - 1][graphToPrintHolder->width - 1] = graphToPrint->graph[graph->height - 1][graph->width - 1];
 				printGraph(graphToPrintHolder);
 			}
